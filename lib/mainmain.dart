@@ -13,10 +13,10 @@ import 'package:flt_telephony_info/flt_telephony_info.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MyApp1());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp1 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -157,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Text('Phone Number: ${_info?.line1Number}\n'), //////
+              Text('getTelePhone Number: ${_info?.line1Number}\n'), //////
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextField(
