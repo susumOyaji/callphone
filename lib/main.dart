@@ -6,6 +6,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:flt_telephony_info/flt_telephony_info.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/services.dart';
 import 'package:device_info/device_info.dart';
 import 'dart:io' show Platform;
@@ -18,7 +19,7 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  TextEditingController _numberCtrl = new TextEditingController();
+  TextEditingController textEditingController = new TextEditingController();
   TelephonyInfo _info;
   int count = 0;
   DateTime now = DateTime.now();
@@ -28,11 +29,11 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    getDeviceInfo();
+    //getDeviceInfo();
     //getTelephonyInfo();
 
     Timer.periodic(const Duration(seconds: 10), _timer);
-    _numberCtrl.text = "085921191121";
+    textEditingController.text = "085921191121";
   }
 
   void _timer(Timer timer) {
@@ -65,6 +66,7 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  /*
   void getDeviceInfo() async {
     DeviceInfoPlugin deviceInfo = new DeviceInfoPlugin();
     if (Platform.isAndroid) {
@@ -123,32 +125,51 @@ class _MyAppState extends State<MyApp> {
       'utsname.machine:': data.utsname.machine,
     };
   }
+  */
 
   @override
   Widget build(BuildContext context) {
-    return new MaterialApp(
-      home: new Scaffold(
-        appBar: new AppBar(
-          title: const Text('Plugin example app'),
-        ),
-        body: new Column(children: <Widget>[
-          Text('getTelePhone Number: ${_info?.line1Number}\n'), //////
-          Padding(
-            padding: EdgeInsets.all(8.0),
-            child: TextField(
-              controller: _numberCtrl,
-              decoration: InputDecoration(labelText: "Phone Number"),
-              keyboardType: TextInputType.number,
+    return Scaffold(
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            child: TextFormField(
+              keyboardType: TextInputType.phone,
+              controller: textEditingController,
+              onSaved: (phoneNumber) {
+                textEditingController.text = phoneNumber;
+              },
             ),
           ),
           RaisedButton(
-            child: Text("Start Call"),
-            onPressed: () async {
-              FlutterPhoneDirectCaller.callNumber(_numberCtrl.text);
+            child: Text("_launchPhoneURL"),
+            onPressed: () {
+              _launchPhoneURL(textEditingController.text);
+            },
+          ),
+          RaisedButton(
+            child: Text("_callNumber"),
+            onPressed: () {
+              _callNumber(textEditingController.text);
             },
           )
-        ]),
+        ],
       ),
     );
+  }
+
+  _callNumber(String phoneNumber) async {
+    String number = phoneNumber;
+    await FlutterPhoneDirectCaller.callNumber(number);
+  }
+
+  _launchPhoneURL(String phoneNumber) async {
+    String url = 'tel:' + phoneNumber;
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 }
