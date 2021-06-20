@@ -13,12 +13,26 @@ import 'dart:io' show Platform;
 
 void main() => runApp(new MyApp());
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      home: MyApp1(title: 'app-to-phone-flutter'),
+    );
+  }
+}
+
+class MyApp1 extends StatefulWidget {
+  MyApp1({Key key, this.title}) : super(key: key);
+  final String title;
+
   @override
   _MyAppState createState() => new _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp1> {
+  SdkState _sdkState = SdkState.LOGGED_OUT;
   TextEditingController textEditingController = new TextEditingController();
   TelephonyInfo _info;
   int count = 0;
@@ -130,33 +144,41 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            child: TextFormField(
-              keyboardType: TextInputType.phone,
-              controller: textEditingController,
-              onSaved: (phoneNumber) {
-                textEditingController.text = phoneNumber;
-              },
-            ),
-          ),
-          RaisedButton(
-            child: Text("_launchPhoneURL"),
-            onPressed: () {
-              _launchPhoneURL(textEditingController.text);
-            },
-          ),
-          RaisedButton(
-            child: Text("_callNumber"),
-            onPressed: () {
-              _callNumber(textEditingController.text);
-            },
-          )
-        ],
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[SizedBox(height: 64), _updateView()],
+        ),
       ),
     );
+  }
+
+  Widget _updateView() {
+    if (_sdkState == SdkState.LOGGED_OUT) {
+      return RaisedButton(child: Text("LOGIN AS ALICE"));
+    }
+  }
+
+  Future<void> _loginUser() async {
+    String token = "ALICE_TOKEN";
+
+    try {
+      await platformMethodChannel
+          .invokeMethod('loginUser', <String, dynamic>{'token': token});
+    } on PlatformException catch (e) {
+      print(e);
+    }
+  }
+
+  Future<void> _makeCall() async {
+    // Make call
+  }
+
+  Future<void> _endCall() async {
+    // End call
   }
 
   _callNumber(String phoneNumber) async {
@@ -173,3 +195,5 @@ class _MyAppState extends State<MyApp> {
     }
   }
 }
+
+enum SdkState { LOGGED_OUT, LOGGED_IN, WAIT, ON_CALL, ERROR }
