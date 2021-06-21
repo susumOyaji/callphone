@@ -6,7 +6,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:flt_telephony_info/flt_telephony_info.dart';
-import 'package:flutter/services.dart';
+//import 'package:flutter/services.dart';
 
 void main() => runApp(new MyApp());
 
@@ -18,6 +18,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   TextEditingController _numberCtrl = new TextEditingController();
   TelephonyInfo _info;
+  CallState _callState = new CallState();
+
   int count = 0;
   DateTime now = DateTime.now();
   String currentmonth = DateFormat('\n EEE d MMM\n').format(DateTime
@@ -26,7 +28,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    //getTelephonyInfo();
+    getTelephonyInfo();
 
     Timer.periodic(const Duration(seconds: 10), _timer);
     _numberCtrl.text = "085921191121";
@@ -70,7 +72,8 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: new Column(children: <Widget>[
-          Text('getTelePhone Number: ${_info?.line1Number}\n'), //////
+          Text(
+              'getTelePhoneInfo: ${_info.callState.toString() /*line1Number*/}\n'), //////
           Padding(
             padding: EdgeInsets.all(8.0),
             child: TextField(
