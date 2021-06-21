@@ -84,6 +84,12 @@ class _MyAppState extends State<MyApp> {
             onPressed: () async {
               FlutterPhoneDirectCaller.callNumber(_numberCtrl.text);
             },
+          ),
+          ElevatedButton(
+            child: Text("Rpeet Call"),
+            onPressed: () async {
+              FlutterPhoneDirectCaller.callNumber(_numberCtrl.text);
+            },
           )
         ]),
       ),
